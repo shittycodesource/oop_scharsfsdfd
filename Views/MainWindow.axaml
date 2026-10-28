@@ -1,0 +1,113 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:TodoApp.ViewModels"
+        xmlns:models="using:TodoApp.Models"
+        x:Class="TodoApp.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="Todo List"
+        Width="1100" Height="650"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="10" RowDefinitions="*,Auto" ColumnDefinitions="2*,*">
+
+        <!-- ==================== Список задач ==================== -->
+        <DataGrid Grid.Row="0" Grid.Column="0"
+                  ItemsSource="{Binding Tasks}"
+                  SelectedItem="{Binding SelectedTask}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserReorderColumns="True"
+                  GridLinesVisibility="Horizontal"
+                  Margin="0,0,10,0">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Название"
+                                    Binding="{Binding Title}"
+                                    Width="*"/>
+                <DataGridTextColumn Header="Срок"
+                                    Binding="{Binding DueToDate, StringFormat={}{0:dd.MM.yyyy}}"
+                                    Width="110"/>
+                <DataGridTextColumn Header="Приоритет"
+                                    Binding="{Binding Priority}"
+                                    Width="100"/>
+                <DataGridTextColumn Header="Статус"
+                                    Binding="{Binding Status}"
+                                    Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- ==================== Форма редактирования ==================== -->
+        <ScrollViewer Grid.Row="0" Grid.Column="1">
+            <StackPanel Spacing="6">
+
+                <TextBlock Text="Название:"/>
+                <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Text="Описание:" Margin="0,6,0,0"/>
+                <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         Height="80"/>
+
+                <TextBlock Text="Срок выполнения:" Margin="0,6,0,0"/>
+                <DatePicker SelectedDate="{Binding DueToDate}"/>
+
+                <TextBlock Text="Приоритет:" Margin="0,6,0,0"/>
+                <ComboBox ItemsSource="{Binding Priorities}"
+                          SelectedItem="{Binding Priority}"
+                          HorizontalAlignment="Stretch"/>
+
+                <TextBlock Text="Статус:" Margin="0,6,0,0"/>
+                <ComboBox ItemsSource="{Binding Statuses}"
+                          SelectedItem="{Binding Status}"
+                          HorizontalAlignment="Stretch"/>
+
+                <Button Content="Добавить"
+                        Command="{Binding AddCommand}"
+                        HorizontalAlignment="Stretch"
+                        Margin="0,12,0,0"/>
+
+                <Button Content="Сохранить изменения"
+                        Command="{Binding UpdateCommand}"
+                        HorizontalAlignment="Stretch"/>
+
+                <Button Content="Удалить"
+                        Command="{Binding DeleteCommand}"
+                        HorizontalAlignment="Stretch"/>
+
+                <Separator Margin="0,10"/>
+
+                <Button Content="Сохранить в файл"
+                        Command="{Binding SaveCommand}"
+                        HorizontalAlignment="Stretch"/>
+
+                <Button Content="Загрузить из файла"
+                        Command="{Binding LoadCommand}"
+                        HorizontalAlignment="Stretch"/>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- ==================== Статус-бар ==================== -->
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10,0,0" Spacing="4">
+
+            <!-- Ошибка: видна только когда есть текст -->
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Foreground="Red"
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding HasError}"/>
+
+            <!-- Информация: видна только когда есть текст -->
+            <TextBlock Text="{Binding InfoMessage}"
+                       Foreground="Green"
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding HasInfo}"/>
+
+            <!-- Счётчик задач -->
+            <TextBlock Text="{Binding TasksCount, StringFormat='Задач: {0}'}"
+                       Foreground="Gray"
+                       HorizontalAlignment="Right"/>
+        </StackPanel>
+
+    </Grid>
+</Window>
